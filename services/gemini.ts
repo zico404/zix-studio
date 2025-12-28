@@ -11,11 +11,23 @@ export class ZixError extends Error {
   }
 }
 
+const getAIClient = () => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    throw new ZixError(
+      "API Configuration Missing",
+      "Please set up your Gemini API key in the admin menu.",
+      "AUTH_MISSING"
+    );
+  }
+  return new GoogleGenAI({ apiKey });
+};
+
 export const editImageWithGemini = async (
   base64Image: string,
   prompt: string
 ): Promise<{ imageUrl: string; text: string }> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = getAIClient();
   
   const base64Data = base64Image.split(',')[1] || base64Image;
   const mimeType = base64Image.match(/data:([^;]+);/)?.[1] || 'image/png';
@@ -112,11 +124,11 @@ export const editImageWithGemini = async (
 };
 
 export const getDynamicSuggestions = async (base64Image: string): Promise<string[]> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-  const base64Data = base64Image.split(',')[1] || base64Image;
-  const mimeType = base64Image.match(/data:([^;]+);/)?.[1] || 'image/png';
-
   try {
+    const ai = getAIClient();
+    const base64Data = base64Image.split(',')[1] || base64Image;
+    const mimeType = base64Image.match(/data:([^;]+);/)?.[1] || 'image/png';
+
     const response = await ai.models.generateContent({
       model: SUGGESTION_MODEL,
       contents: {
