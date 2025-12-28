@@ -1,0 +1,7 @@
+{
+  "name": "zix",
+  "description": "Premium AI image editing by zix. Transform your visuals with natural language using a sophisticated black and gold interface.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
